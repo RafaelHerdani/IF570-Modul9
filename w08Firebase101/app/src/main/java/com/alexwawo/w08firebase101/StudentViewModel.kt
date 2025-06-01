@@ -56,5 +56,34 @@ class StudentViewModel : ViewModel() {
                 Log.w("Firestore", "Error getting documents.", exception)
             }
     }
-}
 
+    fun updateStudent(student: Student) {
+        val updatedData = hashMapOf(
+            "id" to student.id,
+            "name" to student.name,
+            "program" to student.program,
+            "phones" to student.phones
+        )
+
+        db.collection("students")
+            .document(student.docId)
+            .set(updatedData)
+            .addOnSuccessListener {
+                Log.d("firestore", "DocumentSnapshot updated with ID: ${student.docId}")
+                fetchStudents()
+            }
+            .addOnFailureListener { e -> Log.w("Firestore", "Error updating document", e)
+            }
+    }
+
+    fun deleteStudent(student: Student) {
+        db.collection("students")
+            .document(student.docId)
+            .delete()
+            .addOnSuccessListener { Log.d("Firestore", "DocumentSnapshot deleted with ID: ${student.docId}")
+                fetchStudents()
+            }
+            .addOnFailureListener { e -> Log.w("Firestore", "Error deleting document", e)
+            }
+    }
+}
